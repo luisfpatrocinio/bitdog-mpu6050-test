@@ -5,6 +5,7 @@
 
 // Patrolibs
 #include "led.h"
+#include "gyro.h"
 
 // Definições de GPIOs e endereço do MPU6050
 #define I2C_PORT i2c1
@@ -106,6 +107,6 @@ int main()
         setLedBrightness(LED_RED_PIN, 127 + (int)(roll * 127 / 90));    // Ajusta brilho do LED vermelho baseado no roll
         setLedBrightness(LED_GREEN_PIN, 127 + (int)(pitch * 127 / 90)); // Ajusta brilho do LED verde baseado no pitch
 
-        sleep_ms(64); // Atualiza a cada 0.5 segundo
+        sleep_ms(64); // Atualiza a cada 64ms (15.6Hz)
     }
 }
