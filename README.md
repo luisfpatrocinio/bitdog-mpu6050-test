@@ -1,4 +1,4 @@
-# bitdog-mpu6050-tester
+# bitdog-mpu6050-test
 
 A simple project to test and visualize MPU6050 sensor readings using a Raspberry Pi Pico. The project reads roll and pitch angles from the MPU6050 accelerometer and uses them to control LED brightness in real-time.
 
@@ -31,6 +31,8 @@ A simple project to test and visualize MPU6050 sensor readings using a Raspberry
 2. Flash the code to your Raspberry Pi Pico
 3. The program will start reading sensor data and updating LED brightness based on the inclination angles
 
-## License
+## 📄 License
 
-MIT License 
+This project is licensed under the MIT License.  
+Feel free to use it in your projects -- just make sure to credit **Luis Felipe Patrocinio** ([GitHub](https://github.com/luisfpatrocinio)).  
+See the [LICENSE](./LICENSE) file for full details.
