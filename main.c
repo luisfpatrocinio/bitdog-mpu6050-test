@@ -9,6 +9,7 @@
 // Project Libs
 #include "gyro.h"
 #include "wifi_udp.h"
+#include "patroGyroTest.h"
 
 // Definições de GPIOs e endereço do MPU6050
 #define I2C_PORT i2c1
@@ -51,39 +52,7 @@ int main()
         int pitch_int = (int)(pitch / 90 * 6); // Mapeia pitch para 0-5
         printf("Dado Roll: %d | Dado Pitch: %d\n", roll_int, pitch_int);
 
-        setAllLedsBrightness(0); // Desliga todos os LEDs
-
-        if (roll_int == -5)
-        {
-            setLedBrightness(LED_RED_PIN, 255);
-        }
-
-        if (roll_int == 5)
-        {
-            setLedBrightness(LED_RED_PIN, 255);
-        }
-
-        if (pitch_int == -5)
-        {
-            setLedBrightness(LED_GREEN_PIN, 255);
-        }
-
-        if (pitch_int == 5)
-        {
-            setLedBrightness(LED_GREEN_PIN, 255);
-        }
-
-        if (pitch_int == 0 && roll_int == 0)
-        {
-            setLedBrightness(LED_BLUE_PIN, 255); // Liga o LED azul se ambos forem zero
-        }
-
-        if (pitch_int == -11 || pitch_int == 11 || roll_int == -11 || roll_int == 11)
-        {
-            setLedBrightness(LED_BLUE_PIN, 255);
-            setLedBrightness(LED_RED_PIN, 255);
-            setLedBrightness(LED_GREEN_PIN, 255);
-        }
+        updateLedsByRollAndPitch(roll_int, pitch_int);
 
         sleep_ms(200);
     }

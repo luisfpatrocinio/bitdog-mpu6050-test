@@ -47,6 +47,7 @@ pico_sdk_init()
 add_executable(GYRO_TEST 
     main.c
     gyro.c
+    patroGyroTest.c
 )
 
 pico_set_program_name(GYRO_TEST "GYRO_TEST")
