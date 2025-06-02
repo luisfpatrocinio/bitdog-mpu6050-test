@@ -9,18 +9,12 @@
 // Project Libs
 #include "gyro.h"
 #include "wifi_udp.h"
-         "
 
 // Definições de GPIOs e endereço do MPU6050
 #define I2C_PORT i2c1
 #define MPU6050_ADDR 0x68
 #define SDA_PIN 2
 #define SCL_PIN 3
-
-// Definições do MPU6050
-int16_t ax, ay, az;
-float ax_g, ay_g, az_g;
-float roll, pitch;
 
 int main()
 {
