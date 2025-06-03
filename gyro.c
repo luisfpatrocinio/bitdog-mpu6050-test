@@ -15,26 +15,18 @@
 #define M_PI 3.14159265358979323846
 #endif
 
-// --- Global Variable Definitions ---
-
-int16_t ax;  ///< Raw X-axis accelerometer data.
-int16_t ay;  ///< Raw Y-axis accelerometer data.
-int16_t az;  ///< Raw Z-axis accelerometer data.
-float ax_g;  ///< X-axis acceleration in g's.
-float ay_g;  ///< Y-axis acceleration in g's.
-float az_g;  ///< Z-axis acceleration in g's.
-float roll;  ///< Calculated roll angle in degrees.
-float pitch; ///< Calculated pitch angle in degrees.
-
 /**
  * @brief Initialize the MPU6050 sensor.
- * @return 0 if initialization is successful, non-zero otherwise.
  */
-int initMPU6050()
+void initMPU6050()
 {
-    uint8_t reset[2] = {0x6B, 0x00}; // Power Management 1 register address and reset value
-    i2c_write_blocking(I2C_PORT, MPU6050_ADDR, reset, 2, false);
-    return 0;
+    uint8_t setup_data[2];
+
+    // Wake up MPU6050 - Power Management 1 register
+    setup_data[0] = 0x6B; // PWR_MGMT_1 register
+    setup_data[1] = 0x00; // Clear sleep bit
+
+    i2c_write_blocking(I2C_PORT, MPU6050_ADDR, setup_data, 2, false);
 }
 
 /**
@@ -54,6 +46,29 @@ void updateAccelerometerData(MPU6050_data_t *data)
 }
 
 /**
+ * @brief Reads raw gyroscope data from the MPU6050 sensor.
+ *
+ * This function reads 6 bytes from the MPU6050, starting from the GYRO_XOUT_H register (0x43),
+ * which contain the high and low bytes for X, Y, and Z-axis angular velocity.
+ * The raw 16-bit values are then assembled and stored in the provided MPU6050_data_t structure.
+ *
+ * @param data Pointer to an MPU6050_data_t structure to store the raw gyroscope data.
+ * @note The raw values are in the range of -32768 to 32767.
+ */
+void updateGyroscopeData(MPU6050_data_t *data)
+{
+    uint8_t buffer[6];
+    uint8_t reg = 0x43; // Gyroscope data register address (GYRO_XOUT_H)
+
+    i2c_write_blocking(I2C_PORT, MPU6050_ADDR, &reg, 1, true);
+    i2c_read_blocking(I2C_PORT, MPU6050_ADDR, buffer, 6, false);
+
+    data->g_x = (buffer[0] << 8) | buffer[1];
+    data->g_y = (buffer[2] << 8) | buffer[3];
+    data->g_z = (buffer[4] << 8) | buffer[5];
+}
+
+/**
  * @brief Calculates the roll and pitch angles from accelerometer data.
  *
  * This function converts the raw accelerometer readings into acceleration in g's
@@ -69,13 +84,13 @@ void updateAccelerometerData(MPU6050_data_t *data)
 void calculateInclinationAngles(MPU6050_data_t *data)
 {
     // Convert raw accelerometer values to g's
-    ax_g = data->raw_x / ACCEL_FS_SEL_2G_SENSITIVITY;
-    ay_g = data->raw_y / ACCEL_FS_SEL_2G_SENSITIVITY;
-    az_g = data->raw_z / ACCEL_FS_SEL_2G_SENSITIVITY;
+    data->g_x = data->raw_x / ACCEL_FS_SEL_2G_SENSITIVITY;
+    data->g_y = data->raw_y / ACCEL_FS_SEL_2G_SENSITIVITY;
+    data->g_z = data->raw_z / ACCEL_FS_SEL_2G_SENSITIVITY;
 
     // Calculate Roll (rotation around X-axis)
-    data->roll = atan2(ay_g, az_g) * (180.0 / M_PI);
+    data->roll = atan2(data->g_y, data->g_z) * (180.0 / M_PI);
 
     // Calculate Pitch (rotation around Y-axis)
-    data->pitch = atan2(-ax_g, sqrt(ay_g * ay_g + az_g * az_g)) * (180.0 / M_PI);
+    data->pitch = atan2(-data->g_x, sqrt(data->g_y * data->g_y + data->g_z * data->g_z)) * (180.0 / M_PI);
 }

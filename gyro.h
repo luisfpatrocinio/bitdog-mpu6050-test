@@ -18,11 +18,12 @@
 
 // --- MPU6050 Configuration Constants ---
 
-#define I2C_PORT i2c1                        ///< I2C port used for MPU6050 communication.
-#define MPU6050_ADDR 0x68                    ///< I2C address of the MPU6050 sensor.
-#define SDA_PIN 2                            ///< GPIO pin for I2C SDA line.
-#define SCL_PIN 3                            ///< GPIO pin for I2C SCL line.
-#define ACCEL_FS_SEL_2G_SENSITIVITY 16384.0f // LSB/g for ±2g range
+#define I2C_PORT i2c1                         ///< I2C port used for MPU6050 communication.
+#define MPU6050_ADDR 0x68                     ///< I2C address of the MPU6050 sensor.
+#define SDA_PIN 2                             ///< GPIO pin for I2C SDA line.
+#define SCL_PIN 3                             ///< GPIO pin for I2C SCL line.
+#define ACCEL_FS_SEL_2G_SENSITIVITY 16384.0f  // LSB/g for ±2g range
+#define GYRO_FS_SEL_250DPS_SENSITIVITY 131.0f // LSB/(º/s) for ±250dps
 
 // Dados do sensor
 typedef struct
@@ -43,31 +44,43 @@ typedef struct
  *
  * @note This function assumes I2C has been properly initialized.
  */
-int initMPU6050();
+void initMPU6050();
 
 /**
  * @brief Reads raw accelerometer data from the MPU6050 sensor.
  *
  * This function reads 6 bytes from the MPU6050, starting from the ACCEL_XOUT_H register (0x3B),
  * which contain the high and low bytes for X, Y, and Z-axis acceleration.
- * The raw 16-bit values are then assembled and stored in the provided pointers.
+ * The raw 16-bit values are then assembled and stored in the provided MPU6050_data_t structure.
  *
- * @param ax Pointer to store the raw X-axis acceleration data.
- * @param ay Pointer to store the raw Y-axis acceleration data.
- * @param az Pointer to store the raw Z-axis acceleration data.
+ * @param data Pointer to an MPU6050_data_t structure to store the raw X, Y, and Z-axis acceleration data.
  * @note The raw values are in the range of -32768 to 32767.
  */
 void updateAccelerometerData(MPU6050_data_t *data);
 
 /**
+ * @brief Reads raw gyroscope data from the MPU6050 sensor.
+ *
+ * This function reads 6 bytes from the MPU6050, starting from the GYRO_XOUT_H register (0x43),
+ * which contain the high and low bytes for X, Y, and Z-axis angular velocity.
+ * The raw 16-bit values are then assembled and stored in the provided MPU6050_data_t structure.
+ *
+ * @param data Pointer to an MPU6050_data_t structure to store the raw gyroscope data.
+ * @note The raw values are in the range of -32768 to 32767.
+ */
+void updateGyroscopeData(MPU6050_data_t *data);
+
+/**
  * @brief Calculates the roll and pitch angles from accelerometer data.
  *
- * This function converts the raw accelerometer readings into acceleration in g's
- * and then uses these values to compute the roll and pitch angles, which represent
- * the inclination of the sensor.
+ * This function converts the raw accelerometer readings stored in the provided
+ * MPU6050_data_t structure into acceleration in g's and then uses these values
+ * to compute the roll and pitch angles, which represent the inclination of the sensor.
+ * The calculated angles are stored back into the `roll` and `pitch` members of the
+ * same `MPU6050_data_t` structure.
  *
- * @param roll Pointer to store the calculated roll angle in degrees.
- * @param pitch Pointer to store the calculated pitch angle in degrees.
+ * @param data Pointer to an MPU6050_data_t structure containing raw accelerometer data
+ *             and where the calculated roll and pitch angles will be stored.
  * @note Roll is rotation around X-axis, Pitch is rotation around Y-axis.
  * @note The angles are calculated using atan2 and are in the range of -180 to 180 degrees.
  */
