@@ -92,17 +92,19 @@ int main()
 
     sleep_ms(1000);
 
+    MPU6050_data_t sensor_data; // Declare a struct to hold sensor data
+
     while (true)
     {
         // Ler sensores
-        updateAccelerometerData(&ax, &ay, &az);
-        calculateInclinationAngles(&roll, &pitch);
+        updateAccelerometerData(&sensor_data);
+        calculateInclinationAngles(&sensor_data);
 
-        printf("Roll (X): %.2f° | Pitch (Y): %.2f° \n", roll, pitch);
+        printf("Roll (X): %.2f° | Pitch (Y): %.2f° \n", sensor_data.roll, sensor_data.pitch);
 
         // Printar numeros inteiros de acordo com os valores de roll e pitch, simulando um dado:
-        int roll_int = (int)(roll / 90 * 6);   // Mapeia roll para 0-5
-        int pitch_int = (int)(pitch / 90 * 6); // Mapeia pitch para 0-5
+        int roll_int = (int)(sensor_data.roll / 90 * 6);   // Mapeia roll para 0-5
+        int pitch_int = (int)(sensor_data.pitch / 90 * 6); // Mapeia pitch para 0-5
         printf("Dado Roll: %d | Dado Pitch: %d\n", roll_int, pitch_int);
 
         updateLedsByRollAndPitch(roll_int, pitch_int);

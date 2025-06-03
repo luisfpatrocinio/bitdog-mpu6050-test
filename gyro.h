@@ -18,21 +18,19 @@
 
 // --- MPU6050 Configuration Constants ---
 
-#define I2C_PORT i2c1     ///< I2C port used for MPU6050 communication.
-#define MPU6050_ADDR 0x68 ///< I2C address of the MPU6050 sensor.
-#define SDA_PIN 2         ///< GPIO pin for I2C SDA line.
-#define SCL_PIN 3         ///< GPIO pin for I2C SCL line.
+#define I2C_PORT i2c1                        ///< I2C port used for MPU6050 communication.
+#define MPU6050_ADDR 0x68                    ///< I2C address of the MPU6050 sensor.
+#define SDA_PIN 2                            ///< GPIO pin for I2C SDA line.
+#define SCL_PIN 3                            ///< GPIO pin for I2C SCL line.
+#define ACCEL_FS_SEL_2G_SENSITIVITY 16384.0f // LSB/g for ±2g range
 
-// --- Global Variables ---
-
-extern int16_t ax;  ///< Raw X-axis accelerometer data.
-extern int16_t ay;  ///< Raw Y-axis accelerometer data.
-extern int16_t az;  ///< Raw Z-axis accelerometer data.
-extern float ax_g;  ///< X-axis acceleration in g's.
-extern float ay_g;  ///< Y-axis acceleration in g's.
-extern float az_g;  ///< Z-axis acceleration in g's.
-extern float roll;  ///< Calculated roll angle in degrees.
-extern float pitch; ///< Calculated pitch angle in degrees.
+// Dados do sensor
+typedef struct
+{
+    int16_t raw_x, raw_y, raw_z;
+    float g_x, g_y, g_z;
+    float roll, pitch;
+} MPU6050_data_t;
 
 // --- Function Prototypes ---
 
@@ -45,7 +43,7 @@ extern float pitch; ///< Calculated pitch angle in degrees.
  *
  * @note This function assumes I2C has been properly initialized.
  */
-void initMPU6050();
+int initMPU6050();
 
 /**
  * @brief Reads raw accelerometer data from the MPU6050 sensor.
@@ -59,7 +57,7 @@ void initMPU6050();
  * @param az Pointer to store the raw Z-axis acceleration data.
  * @note The raw values are in the range of -32768 to 32767.
  */
-void updateAccelerometerData(int16_t *ax, int16_t *ay, int16_t *az);
+void updateAccelerometerData(MPU6050_data_t *data);
 
 /**
  * @brief Calculates the roll and pitch angles from accelerometer data.
@@ -73,6 +71,6 @@ void updateAccelerometerData(int16_t *ax, int16_t *ay, int16_t *az);
  * @note Roll is rotation around X-axis, Pitch is rotation around Y-axis.
  * @note The angles are calculated using atan2 and are in the range of -180 to 180 degrees.
  */
-void calculateInclinationAngles(float *roll, float *pitch);
+void calculateInclinationAngles(MPU6050_data_t *data);
 
 #endif // GYRO_H
