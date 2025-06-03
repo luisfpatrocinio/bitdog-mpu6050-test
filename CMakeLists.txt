@@ -47,6 +47,7 @@ pico_sdk_init()
 add_executable(GYRO_TEST 
     main.c
     gyro.c
+    wifi_udp.c
     patroGyroTest.c
 )
 
