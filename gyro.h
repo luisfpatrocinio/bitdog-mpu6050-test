@@ -24,14 +24,45 @@
 #define SCL_PIN 3                             ///< GPIO pin for I2C SCL line.
 #define ACCEL_FS_SEL_2G_SENSITIVITY 16384.0f  // LSB/g for ±2g range
 #define GYRO_FS_SEL_250DPS_SENSITIVITY 131.0f // LSB/(º/s) for ±250dps
+#define ALPHA 0.96f                           // Complementary filter coefficient
 
 // Dados do sensor
 typedef struct
 {
     int16_t raw_x, raw_y, raw_z;
     float g_x, g_y, g_z;
-    float roll, pitch;
+    float roll, pitch, yaw;
 } MPU6050_data_t;
+
+// --- Cube Face Definitions ---
+// Enum to represent the cube faces based on roll and pitch angles.
+typedef enum
+{
+    FACE_UNKNOWN,
+    FACE_Z_POS,
+    FACE_Z_NEG,
+    FACE_X_POS,
+    FACE_X_NEG,
+    FACE_Y_POS,
+    FACE_Y_NEG
+} CubeFace_e;
+
+// Global variable to hold the current face of the cube based on roll and pitch.
+extern CubeFace_e current_face;
+
+/**
+ * @brief Determines the cube face based on roll and pitch angles.
+ *
+ * This function calculates which face of a cube corresponds to the given roll and pitch angles.
+ * The angles are expected to be in degrees, where:
+ * - Roll (r) is rotation around the X-axis.
+ * - Pitch (p) is rotation around the Y-axis.
+ *
+ * @param r Roll angle in degrees.
+ * @param p Pitch angle in degrees.
+ * @return CubeFace_e Enum value representing the cube face.
+ */
+CubeFace_e getCubeFace(float r, float p); // r = roll, p = pitch
 
 // --- Function Prototypes ---
 
@@ -85,5 +116,9 @@ void updateGyroscopeData(MPU6050_data_t *data);
  * @note The angles are calculated using atan2 and are in the range of -180 to 180 degrees.
  */
 void calculateInclinationAngles(MPU6050_data_t *data);
+
+void initOrientation(MPU6050_data_t *data);
+
+void updateOrientation(MPU6050_data_t *data);
 
 #endif // GYRO_H

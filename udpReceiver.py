@@ -6,7 +6,9 @@ import time
 should_send = True
 send_lock = threading.Lock()
 
-def send_searching(target_ip='192.168.137.173', send_port=1234):
+ipString = "192.168.137.110"
+
+def send_searching(target_ip=ipString, send_port=1234):
     # Create UDP socket for sending
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     
@@ -59,6 +61,12 @@ def receive_messages(receive_port=5000):
     sock.close()
 
 if __name__ == '__main__':
+
+    print("Qual IP?")
+    newIpString = input(f"Digite o IP (default: {ipString}):")
+    if newIpString.strip():
+        ipString = newIpString.strip()
+
     # Start sender thread
     sender_thread = threading.Thread(target=send_searching, daemon=True)
     sender_thread.start()
