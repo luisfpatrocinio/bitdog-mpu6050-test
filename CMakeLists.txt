@@ -15,9 +15,9 @@ if(WIN32)
 else()
     set(USERHOME $ENV{HOME})
 endif()
-set(sdkVersion 2.1.1)
-set(toolchainVersion 14_2_Rel1)
-set(picotoolVersion 2.1.1)
+set(sdkVersion 2.1.0)
+set(toolchainVersion 13_3_Rel1)
+set(picotoolVersion 2.1.0)
 set(picoVscode ${USERHOME}/.pico-sdk/cmake/pico-vscode.cmake)
 if (EXISTS ${picoVscode})
     include(${picoVscode})
@@ -43,13 +43,16 @@ FetchContent_MakeAvailable(bitdoglibs)
 # Initialise the Raspberry Pi Pico SDK
 pico_sdk_init()
 
+# Glob all source files in the src directory
+FILE(GLOB_RECURSE SOURCES "src/*.c")
+
+message(STATUS "Arquivos encontrados: ${SOURCE}")
+
 # Add executable. Default name is the project name, version 0.1
 add_executable(GYRO_TEST 
-    main.c
-    gyro.c
-    wifi_udp.c
-    patroGyroTest.c
+    ${SOURCES}
 )
+
 
 pico_set_program_name(GYRO_TEST "GYRO_TEST")
 pico_set_program_version(GYRO_TEST "0.1")

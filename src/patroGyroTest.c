@@ -7,6 +7,7 @@
  * @author Luis Felipe Patrocinio (https://github.com/luisfpatrocinio)
  */
 #include "patroGyroTest.h"
+#include "gyro.h"
 
 /**
  * @brief Updates the LEDs based on roll and pitch values.
@@ -21,22 +22,22 @@ void updateLedsByRollAndPitch(int roll, int pitch)
 {
     setAllLedsBrightness(0); // Desliga todos os LEDs
 
-    if (roll == -5)
+    if (roll == -MAX_ROLL)
     {
         setLedBrightness(LED_RED_PIN, 255);
     }
 
-    if (roll == 5)
+    if (roll == MAX_ROLL)
     {
         setLedBrightness(LED_RED_PIN, 255);
     }
 
-    if (pitch == -5)
+    if (pitch == -MAX_ROLL)
     {
         setLedBrightness(LED_GREEN_PIN, 255);
     }
 
-    if (pitch == 5)
+    if (pitch == MAX_PITCH)
     {
         setLedBrightness(LED_GREEN_PIN, 255);
     }
@@ -46,7 +47,7 @@ void updateLedsByRollAndPitch(int roll, int pitch)
         setLedBrightness(LED_BLUE_PIN, 255); // Liga o LED azul se ambos forem zero
     }
 
-    if (pitch == -11 || pitch == 11 || roll == -11 || roll == 11)
+    if (pitch == -MAX_PITCH+1 || pitch == MAX_PITCH-1 || roll == -MAX_ROLL+1 || roll == MAX_ROLL-1)
     {
         setLedBrightness(LED_BLUE_PIN, 255);
         setLedBrightness(LED_RED_PIN, 255);
