@@ -24,7 +24,8 @@ int printf(const char *format, ...);
 int connectedToGame = 0; // Flag to indicate if connected to the game
 
 // Callback UDP
-void udpReceiveCallback(void *arg, struct udp_pcb *pcb, struct pbuf *p, const ip_addr_t *addr, u16_t port) {
+void udpReceiveCallback(void *arg, struct udp_pcb *pcb, struct pbuf *p, const ip_addr_t *addr, u16_t port)
+{
   // printf("UDP Received\n");
   char *data = (char *)p->payload;
   data[p->len] = '\0'; // Null-terminate the string
@@ -35,7 +36,8 @@ void udpReceiveCallback(void *arg, struct udp_pcb *pcb, struct pbuf *p, const ip
       *addr; // Update the global target IP address with the sender's address
 
   // Check if the received data is a handshake message
-  if (strcmp(data, "udp_handshake") == 0) {
+  if (strcmp(data, "udp_handshake") == 0)
+  {
     printf("UDP Handshake received, sending ack...\n");
     // Send an acknowledgment back to the sender
     sendUDP("udp_handshake_ack");
@@ -46,7 +48,8 @@ void udpReceiveCallback(void *arg, struct udp_pcb *pcb, struct pbuf *p, const ip
   pbuf_free(p);
 }
 
-int main() {
+int main()
+{
   // Inicialização do Programa
   sleep_ms(690);
   printf("Initializing...");
@@ -72,12 +75,14 @@ int main() {
   wifiConnectAsync(WIFI_SSID, WIFI_PASSWORD);
 
   printf("Waiting for WiFi connection...\n");
-  while (!wifiIsConnected()) {
+  while (!wifiIsConnected())
+  {
     static int timeout = 0;
-    pulseLed(LED_RED_PIN, 0.10); 
+    pulseLed(LED_RED_PIN, 0.10);
 
     timeout += 1;
-    if (timeout > 500) { // Timeout after 10 seconds
+    if (timeout > 500)
+    { // Timeout after 10 seconds
       printf("WiFi connection timed out.\n");
       setLedBrightness(LED_RED_PIN, 255);
       setLedBrightness(LED_GREEN_PIN, 0);
@@ -97,7 +102,8 @@ int main() {
 
   // Create a UDP PCB (Protocol Control Block)
   gPCB = udp_new();
-  if (!gPCB) {
+  if (!gPCB)
+  {
     printf("Failed to create UDP PCB\n");
     return 1;
   }
@@ -108,12 +114,14 @@ int main() {
 
   // Wait for UDP handshake
   printf("Waiting for UDP handshake...\n");
-  while (!connectedToGame) {
+  while (!connectedToGame)
+  {
     pulseLed(LED_GREEN_PIN, 0.20);
   }
 
   // Indicate successful connection to the game
-  if (connectedToGame) {
+  if (connectedToGame)
+  {
     printf("Connected to the game via UDP!\n");
     setLedBrightness(LED_GREEN_PIN, 255);
     setLedBrightness(LED_RED_PIN, 0);
@@ -126,7 +134,8 @@ int main() {
   MPU6050_data_t sensor_data;    // Declare a struct to hold sensor data
   initOrientation(&sensor_data); // Initialize the sensor data structure
 
-  while (true) {
+  while (true)
+  {
     // Ler sensores
     updateOrientation(&sensor_data);
 
@@ -153,7 +162,7 @@ int main() {
 
     // Get and send Roll and Pitch
     char roll_pitch_str[32];
-    snprintf(roll_pitch_str, sizeof(roll_pitch_str), "R|%d|%d", roll_int, pitch_int);
+    snprintf(roll_pitch_str, sizeof(roll_pitch_str), "R|%d|%d|%d", roll_int, pitch_int, yaw_int);
     sendUDP(roll_pitch_str);
 
     updateLedsByRollAndPitch(roll_int, pitch_int);
